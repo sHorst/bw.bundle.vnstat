@@ -51,6 +51,8 @@ files = {
 directories = {
     "/var/lib/vnstat": {
         'mode': "0755",
+        'owner': 'vnstat',
+        'group': 'vnstat',
         'needs': [
             "pkg_apt:vnstat",
         ],
