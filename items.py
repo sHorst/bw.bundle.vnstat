@@ -1,14 +1,13 @@
-svc_systemv = {}
-svc_systemd = {}
+svc_systemd = {
+    "vnstat": {
+        'needs': ['pkg_apt:vnstat'],
+    }
+}
 
-if node.metadata.get('distro_release') == '16.04':
-    svc_systemd["vnstat"] = {
-        'needs': ['pkg_apt:vnstat'],
-    }
-else:
-    svc_systemv["vnstat"] = {
-        'needs': ['pkg_apt:vnstat'],
-    }
+version = '1.16'
+
+if node.os_version[0] == 10:
+    version = '1.18'
 
 pkg_apt = {
     'vnstat': {},
@@ -38,12 +37,16 @@ files = {
         'source': "vnstat.conf",
         'content_type': 'mako',
         'owner': "root",
+        'group': 'vnstat',
         'mode': "0644",
+        'context': {
+            'version': version,
+        },
         'needs': [
             "pkg_apt:vnstat",
         ],
         'triggers': [
-            "svc_systemd:vnstat:restart" if node.metadata.get('distro_release') == '16.04' else "svc_systemv:vnstat:restart"
+            "svc_systemd:vnstat:restart"
         ],
     },
 }
@@ -57,7 +60,7 @@ directories = {
             "pkg_apt:vnstat",
         ],
         'triggers': [
-            "svc_systemd:vnstat:restart" if node.metadata.get('distro_release') == '16.04' else "svc_systemv:vnstat:restart"
+            "svc_systemd:vnstat:restart"
         ],
     }
 }
