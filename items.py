@@ -5,9 +5,16 @@ svc_systemd = {
 }
 
 version = '1.16'
+update_script = 'vnstat -u -i {interface}'
+test = 'test -f /var/lib/vnstat/{interface}'
 
-if node.os_version[0] == 10:
-    version = '1.18'
+if node.os == 'debian':
+    if node.os_version[0] == 10:
+        version = '1.18'
+    elif node.os_version[0] == 11:
+        version = '2.6'
+        update_script = 'vnstat -i {interface} --add'
+        test = 'vnstat -i {interface}'
 
 pkg_apt = {
     'vnstat': {},
@@ -26,8 +33,8 @@ for interface in sorted(node.metadata['interfaces'].keys()):
     }
 
     actions["initialize_database_for_"+interface] = {
-        'command': 'vnstat -u -i {}'.format(interface),
-        'unless': 'test -f /var/lib/vnstat/{}'.format(interface),
+        'command': update_script.format(interface=interface),
+        'unless': test.format(interface=interface),
         'needs': ["pkg_apt:vnstat", ],
     }
 
