@@ -33,8 +33,9 @@ for interface in sorted(node.metadata['interfaces'].keys()):
     }
 
     actions["initialize_database_for_"+interface] = {
+        # will not fail if interface does not exist
         'command': update_script.format(interface=interface),
-        'unless': test.format(interface=interface),
+        'unless': ('test ! -f /sys/class/net/{interface}/operstate || ' + test).format(interface=interface),
         'needs': ["pkg_apt:vnstat", ],
     }
 
