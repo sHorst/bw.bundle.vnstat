@@ -11,8 +11,12 @@ test = 'test -f /var/lib/vnstat/{interface}'
 if node.os == 'debian':
     if node.os_version[0] == 10:
         version = '1.18'
-    elif node.os_version[0] >= 11:
+    elif node.os_version[0] == 11:
         version = '2.6'
+        update_script = 'vnstat -i {interface} --add'
+        test = 'vnstat -i {interface}'
+    elif node.os_version[0] >= 12:
+        version = '2.10'
         update_script = 'vnstat -i {interface} --add'
         test = 'vnstat -i {interface}'
 
