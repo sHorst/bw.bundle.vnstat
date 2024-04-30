@@ -15,8 +15,12 @@ if node.os == 'debian':
         version = '2.6'
         update_script = 'vnstat -i {interface} --add'
         test = 'vnstat -i {interface}'
-    elif node.os_version[0] >= 12:
+    elif node.os_version[0] == 12:
         version = '2.10'
+        update_script = 'vnstat -i {interface} --add'
+        test = 'vnstat -i {interface}'
+    elif node.os_version[0] >= 13:
+        version = '2.12'
         update_script = 'vnstat -i {interface} --add'
         test = 'vnstat -i {interface}'
 
