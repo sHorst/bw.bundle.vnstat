@@ -1,3 +1,5 @@
+global node
+
 svc_systemd = {
     "vnstat": {
         'needs': ['pkg_apt:vnstat'],
@@ -5,22 +7,27 @@ svc_systemd = {
 }
 
 version = '1.16'
+template = 'vnstat.conf'
 update_script = 'vnstat -u -i {interface}'
 test = 'test -f /var/lib/vnstat/{interface}'
 
 if node.os == 'debian':
     if node.os_version[0] == 10:
         version = '1.18'
+        template = 'vnstat.conf'
     elif node.os_version[0] == 11:
         version = '2.6'
+        template = 'vnstat.conf'
         update_script = 'vnstat -i {interface} --add'
         test = 'vnstat -i {interface}'
     elif node.os_version[0] == 12:
         version = '2.10'
+        template = 'vnstat.conf'
         update_script = 'vnstat -i {interface} --add'
         test = 'vnstat -i {interface}'
     elif node.os_version[0] >= 13:
-        version = '2.12'
+        version = '2.13'
+        template = 'vnstat_v2_13.conf'
         update_script = 'vnstat -i {interface} --add'
         test = 'vnstat -i {interface}'
 
@@ -50,7 +57,7 @@ for interface in sorted(node.metadata['interfaces'].keys()):
 
 files = {
     '/etc/vnstat.conf': {
-        'source': "vnstat.conf",
+        'source': template,
         'content_type': 'mako',
         'owner': "root",
         'group': 'vnstat',
